@@ -95,11 +95,6 @@
     </script>
   </head>
   <body>
-    <div class="root-container">
-      <send-gift-form></send-gift-form>
-      <list-gift-details></list-gift-details>
-    </div>
-    
     <template id="sendGiftFormTemplate">
       <form action="javacript:void(0)" method="POST">
         <fieldset>
@@ -124,6 +119,11 @@
         </fieldset>
       </form>
     </template>
+
+    <div class="root-container">
+      <send-gift-form></send-gift-form>
+      <list-gift-details></list-gift-details>
+    </div>
     
     <script>
       function onClickPay(e) {
