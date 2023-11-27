@@ -24,14 +24,14 @@
         }
         static addGift(details) {
           const list = this.getList();
-          const random = Math.random() * list.length;
+          const random = parseInt(Math.random() * list.length);
           if (list[random]) {
             const { gift, address } = details;
       
             const { address: randomAddress } = list[random] || details;
             list[random].address = address;
       
-            list.push({ gift, randomAddress });
+            list.push({ gift, address: randomAddress });
           } else {
             list.push(details);
           }
