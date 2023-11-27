@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      .root-container {
+        justify-content: stretch;
+        display: flex;
+      }
+      
+      .root-container>*{
+        width: 100%;
+      }
+    </style>
+    <script>
+      let _list = null;
+      class GiftService {
+        constructor() {
+          this.list = [];
+        }
+        static getList() {
+          if (!_list) _list = new GiftService().list;
+          return _list;
+        }
+        static addGift(details) {
+          const list = this.getList();
+          const random = Math.random() * list.length;
+          if (list[random]) {
+            const { gift, address } = details;
+      
+            const { address: randomAddress } = list[random] || details;
+            list[random].address = address;
+      
+            list.push({ gift, randomAddress });
+          } else {
+            list.push(details);
+          }
+        }
+      }
+      
+      class SendGiftFrom extends HTMLElement {
+        connectedCallback() {
+          if (!this.rendered) {
+            this.render();
+            this.rendered = true;
+          }
+        }
+      
+        render() {
+          let temp = document.getElementById("sendGiftFormTemplate");
+          let clon = temp.content.cloneNode(true);
+      
+          clon.querySelectorAll("form")[0].addEventListener("submit", function (e) {
+            e.preventDefault();
+            const form = e.target;
+            GiftService.addGift({
+              gift: form.elements.gift.value,
+              address: form.elements.address.value
+            });
+            form.reset();
+            document.getElementsByTagName("list-gift-details")[0].render();
+          });
+          this.appendChild(clon);
+        }
+      }
+      
+      class ListGiftDetails extends HTMLElement {
+        connectedCallback() {
+          if (!this.rendered) {
+            this.render();
+            this.rendered = true;
+          }
+        }
+      
+        render(list) {
+          this.innerHTML = '';
+          let temp = document.getElementById("giftDetailTemplate");
+      
+          console.log(GiftService.getList());
+          GiftService.getList()
+            .map(({ gift, address }) => {
+              let clon = temp.content.cloneNode(true);
+              const [titleNode, addressNode] = clon.querySelectorAll("label");
+              titleNode.textContent = gift;
+              addressNode.textContent = address;
+              return clon;
+            })
+            .forEach((clon) => this.appendChild(clon));
+        }
+      }
+      
+      customElements.define("send-gift-form", SendGiftFrom);
+      customElements.define("list-gift-details", ListGiftDetails);
+
+    </script>
+  </head>
+  <body>
+    <div class="root-container">
+      <send-gift-form></send-gift-form>
+      <list-gift-details></list-gift-details>
+    </div>
+    
+    <template id="sendGiftFormTemplate">
+      <form action="javacript:void(0)" method="POST">
+        <fieldset>
+          <!-- Add i18n translation -->
+          <legend>What you want to gift:</legend>
+          <input name="gift" placeholder="What you want to gift?" /> <br><br>
+          <input name="address" placeholder="What is your address?" /> <br><br>
+          <button type="submit">Send a git</button>
+        </fieldset>
+      </form>
+    </template>
+    
+    <template id="giftDetailTemplate">
+      <form action="javacript:void(0)" method="POST" onsubmit="onClickPay(event)">
+    
+        <fieldset>
+          <!-- Add i18n translation -->
+          <legend>Help buy some gift:</legend>
+          <label title="Gift title"></label> <br><br>
+          <label title="Gift address"></label> <br><br>
+          <button type="submit">Pay</button>
+        </fieldset>
+      </form>
+    </template>
+    
+    <script>
+      function onClickPay(e) {
+        e.preventDefault();
+        console.log(e.target)
+      }
+    </script>
+  <body>
+<html>
